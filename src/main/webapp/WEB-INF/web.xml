@@ -5,6 +5,7 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
 			/WEB-INF/spring/root-context.xml
+			/WEB-INF/spring/websocket-context.xml
 		</param-value>
 	</context-param>
 
