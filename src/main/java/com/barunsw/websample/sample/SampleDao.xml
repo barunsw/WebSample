@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.barunsw.websample.sample.SampleDao">
+	<select id="selectList" parameterType="com.barunsw.websample.vo.AddressVo" 
+		resultType="com.barunsw.websample.vo.AddressVo">
+		SELECT
+			SEQ
+			, FIRST_NAME
+			, LAST_NAME
+			, PHONE	
+		FROM
+			TB_ADDRESS
+	</select>
+</mapper>
