@@ -29,6 +29,8 @@
 	
 	dhtmlxEvent(window, 'load', function() {
 	    initLayout();
+	    initForm();
+	    //initWorker();
 	    initWebsocket();
 	    
 	    retrieveAddressList();
@@ -38,10 +40,72 @@
 	});
 	
 	function initLayout() {
-		app.layout = new dhtmlXLayoutObject(document.body,"2U");
+		app.layout = new dhtmlXLayoutObject(document.body, '1C');
 		
-		app.layout.cells("a").setText("Contacts");   
-		app.layout.cells("b").setText("Contact Details");		
+		app.layout.cells('a').setText('Test');   
+	}
+	
+	function initForm() {
+		app.form = app.layout.cells('a').attachForm();
+		app.form.loadStruct([
+			{type:'block', blockOffset:0, list:[
+					{type: 'button', name: 'execButton', value: '일반 실행'}
+					, {type: 'newcolumn'}
+					, {type: 'button', name: 'workerExecButton', value:'Worker 실행'}
+				]
+			}
+			, {type:'block', blockOffset:0, list:[
+					{type: 'input', name: 'sum', width:200, readonly: true}
+				]
+			}
+		]);
+		
+		app.form.attachEvent('onButtonClick', function(name) {
+			if (name == 'execButton') {
+				alertMsg('일반 실행');
+				var sum = 0;
+				for (var i = 0; i < 10; i++) {
+					sleep(1000);
+					sum = sum + i;
+				}
+				
+				app.form.setItemValue('sum', sum);
+			}
+			else if (name == 'workerExecButton') {
+				alertMsg('Worker 실행');
+				
+				// web worker (HTML5에서 추가된 기능)
+				var worker = new Worker('/resources/js/util/sum_test.js');
+				worker.postMessage({data:10});
+				worker.onmessage = function(e) {
+					console.log('e.data', e.data);
+					app.form.setItemValue('sum', e.data.data);
+				}
+				
+				// 꼭 terminate 시켜야 한다.
+				// worker.terminate();
+				// worker = null;
+			}
+		});
+	}
+	
+	function sleep(delay) {
+		var start = new Date().getTime();
+		while (new Date().getTime() < start + delay);
+	}
+	
+	function initWorker() {
+		// Worker 지원 유무 확인
+		if ( !window.Worker ) {
+			alertMsg('Worker 지원 안함');
+			return false;
+		}
+		
+		app.worker = new Worker('/resources/js/util/worker_test.js');
+		app.worker.postMessage({data:'동해물과 백두산이'});
+		app.worker.onmessage = function(e) {
+			console.log('sample.jsp onmessage e.data:', e.data);
+		}
 	}
 	
 	function initWebsocket() {
